@@ -1,13 +1,32 @@
 ﻿using CafeteriaAromaGrao;
+using Microsoft.AspNetCore.Builder;
 
-Pedido pedido = new Pedido();
+var builder = WebApplication.CreateBuilder(args);
 
-double total = pedido.CalcularTotal(10, 5);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-Console.WriteLine($"Total: R${total}");
+var app = builder.Build();
 
-double totalComDesconto = pedido.AplicarDesconto(total);
+app.UseSwagger();
+app.UseSwaggerUI();
 
-Console.WriteLine($"Total com desconto: R${totalComDesconto}");
+app.MapPost("/pedido/calcular", (PedidoRequest request) =>
+{
+    Pedido pedido = new Pedido();
 
-Console.WriteLine($"Status: {pedido.StatusPedido(totalComDesconto)}");
+    double total = pedido.CalcularTotal(request.Valor, request.Quantidade);
+
+    return Results.Ok(new
+    {
+        total = total
+    });
+});
+
+app.Run();
+
+public class PedidoRequest
+{
+    public double Valor { get; set; }
+    public int Quantidade { get; set; }
+}
