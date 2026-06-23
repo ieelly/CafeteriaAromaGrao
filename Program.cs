@@ -15,11 +15,16 @@ app.MapPost("/pedido/calcular", (PedidoRequest request) =>
 {
     Pedido pedido = new Pedido();
 
-    double total = pedido.CalcularTotal(request.Valor, request.Quantidade);
+    double total = pedido.CalcularTotal(
+        request.Valor,
+        request.Quantidade);
+
+    double totalFinal = pedido.AplicarDesconto(total);
 
     return Results.Ok(new
     {
-        total = total
+        total,
+        totalFinal
     });
 });
 
